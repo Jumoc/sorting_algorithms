@@ -1,6 +1,26 @@
 #include "sort.h"
 
 /**
+ * switch_nodes - switches two nodes
+ *
+ * @first: first node
+ * @second: second node
+ *
+ * Return: void
+*/
+void switch_nodes(listint_t *first, listint_t *second)
+{
+	if (second->prev)
+		second->prev->next = first;
+	if (first->next)
+		first->next->prev = second;
+	first->prev = second->prev;
+	second->next = first->next;
+	first->next = second;
+	second->prev = first;
+}
+
+/**
  * insertion_sort_list - sorts a list with the insertion method
  *
  * @list: list to sort
@@ -14,29 +34,19 @@ void insertion_sort_list(listint_t **list)
 	if (!*list)
 		return;
 
-	current = *list;
-	current = current->next;
+	current = (*list)->next;
 
 	while (current)
 	{
-		aux = current;
+		aux = current->prev;
 		ref = current->next;
-		while ((aux->prev) && (current->n < aux->prev->n))
-			aux = aux->prev;
-		if (aux != current)
+		while (aux && current->n < aux->n)
 		{
-			current->prev->next = current->next;
-			if (current->next)
-				current->next->prev = current->prev;
-
-			if (aux->prev)
-				aux->prev->next = current;
-			else
-				(*list) = current;
-
-			current->prev = aux->prev;
-			aux->prev = current;
-			current->next = aux;
+			switch_nodes(current, aux);
+			aux = current;
+			aux = aux->prev;
+			if ((*list)->prev)
+				(*list) = (*list)->prev;
 			print_list(*list);
 		}
 		current = ref;
